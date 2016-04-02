@@ -7,7 +7,10 @@ var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
-
+/**
+ * Route Imports
+ */
+var signup = require('./routes/signup');
 var app = express();
 // view engine setup
 // uncomment after placing your favicon in /public
@@ -55,4 +58,8 @@ if (app.get('env') === 'production') {
     });
   });
 }
+/**
+ * Routes
+ */
+app.use('/signup', signup);
 module.exports = app;
