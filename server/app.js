@@ -5,8 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
-var users = require('./routes/users');
+var routes = require('./router/index');
+var users = require('./router/routes/users');
 
 var app = express();
 // view engine setup
@@ -28,14 +28,17 @@ if (app.get('env') === 'development') {
   // This covers serving up the index page
   app.use(express.static(path.join(__dirname, '../client/.tmp')));
   app.use(express.static(path.join(__dirname, '../client/app')));
+
+  /**
+   * Routes
+   */
+  var router = require('./router')(app);
   // Error Handling
   app.use(function(err, req, res, next) {
     res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
   });
+
+  module.exports = app;
 }
 
 
@@ -55,4 +58,5 @@ if (app.get('env') === 'production') {
     });
   });
 }
+
 module.exports = app;
