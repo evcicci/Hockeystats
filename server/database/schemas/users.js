@@ -2,6 +2,7 @@
  * Our Schema for Users
  */
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt');
 var Schema = mongoose.Schema;
 
 // Define the User Schema
@@ -24,11 +25,30 @@ userSchema.pre('save', function (next) {
     }
 
     // generate salt
+    bcrypt.genSalt(10, function(err, salt){
 
+        if (err) {
+            return next(err);
+        }
+
+        // create the hash and store it
+        bcrypt.hash(user.password, salt, function(err, hash){
+            if (err) {
+                return next(err);
+            }
+            user.password = hash;
+            next();
+        });
+    });
 });
 
 // Password verification helper
-
+userSchema.methods.comparePassword = function (triedPassword, cb) {
+    bcrypt.compare(triedPassword, this.password, function(err, isMatch) {
+        if(err) return cb(err);
+        cb(null, isMatch);
+    });
+};
 
 // The primary user model
 var User = mongoose.model('User', userSchema);
